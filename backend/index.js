@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import dbConnect from "./config/db.js";
 import authRouter from "./routes/auth.routes.js";
+import connectCloudinary from "./config/cloudinary.js";
+import bookRouter from "./routes/book.routes.js";
 
 dotenv.config();
 const app = express();
@@ -15,12 +17,18 @@ app.use(
     credentials: true,
   }),
 );
-
-// DATABASE CONNECTION
+// ==================== Database Connection ====================
 dbConnect();
 
-// Routes
+// ==================== Cloudinary Configuration ====================
+connectCloudinary();
+
+// ==================== User Routes ====================
 app.use("/api/auth", authRouter);
+
+// ==================== Books Routes ====================
+app.use("/api/books", bookRouter);
+
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {

@@ -168,8 +168,21 @@ export const logoutUser = async (req, res) => {
 // Get My Profile
 export const getMyProfile = async (req, res) => {
   try {
-    const { id } = req.user;
+    const { id, role, email } = req.user;
 
+    // If user is admin, return admin profile from .env
+    if (role === "admin") {
+      return res.status(200).json({
+        success: true,
+        message: "Profile fetched successfully",
+        user: {
+          email: process.env.ADMIN_EMAIL,
+          role: "admin",
+        },
+      });
+    }
+
+    // If user is student, find from database
     const user = await User.findById(id).select("-password");
 
     if (!user) {

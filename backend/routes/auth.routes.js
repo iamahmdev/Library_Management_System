@@ -15,9 +15,9 @@ const router = express.Router();
 // Public Routes
 router.post("/register", registerStudent);
 router.post("/login", loginUser);
-router.get("/logout", logoutUser);
+router.post("/logout", logoutUser);
 router.post("/forgot-password", forgotPassword);
-router.put("/reset-password/:token", resetPassword);
+router.post("/reset-password/:token", resetPassword);
 
 // Private Routes
 router.get("/me", isAuthenticated, getMyProfile);
