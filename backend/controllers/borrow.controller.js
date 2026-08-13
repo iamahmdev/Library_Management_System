@@ -208,7 +208,84 @@ export const getAllBorrowedBooks = async (req, res) => {
   }
 };
 
-// Get Overdue Books - Admin can view books that are overdue
+// Get Student Dashboard Stats
+export const getStudentDashboard = async (req, res) => {
+  try {
+    // Only students can access their dashboard
+    if (req.user.role !== "student") {
+      return res.status(403).json({
+        success: false,
+        message: "Only students can access this dashboard",
+      });
+    }
+
+    const studentId = req.user.id;
+
+    // My currently borrowed books count
+    const currentlyBorrowed = await Borrow.countDocuments({
+      student: studentId,
+      status: "borrowed"
+    });
+
+    // My overdue books count
+    const overdueBooks = await Borrow.countDocuments({
+      student: studentId,
+      status: "borrowed",
+      dueDate: { $lt: new Date() }
+    });
+
+    // My total borrowing history
+    const totalBorrowHistory = await Borrow.countDocuments({
+      student: studentId
+    });
+
+    // Books returned on time vs late
+    const returnedBooks = await Borrow.countDocuments({
+      student: studentId,
+      status: "returned"
+    });
+
+    // My recent borrowing activity (last 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    
+    const recentActivity = await Borrow.countDocuments({
+      student: studentId,
+      borrowDate: { $gte: thirtyDaysAgo }
+    });
+
+    // My currently borrowed books with details
+    const myBorrowedBooks = await Borrow.find({
+      student: studentId,
+      status: "borrowed"
+    }).populate("book", "title category").select("borrowDate dueDate");
+
+    // Available books in library
+    const availableBooks = await Book.countDocuments({
+      availableCopies: { $gt: 0 }
+    });
+
+    return res.status(200).json({
+      success: true,
+      dashboard: {
+        currentlyBorrowed,
+        overdueBooks,
+        totalBorrowHistory,
+        returnedBooks,
+        recentActivity,
+        availableBooks,
+        myBorrowedBooks
+      }
+    });
+  } catch (error) {
+    console.log("Error fetching student dashboard:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch dashboard statistics",
+      error: error.message
+    });
+  }
+};
 export const getOverdueBooks = async (req, res) => {
   try {
     // Only admin can view overdue books

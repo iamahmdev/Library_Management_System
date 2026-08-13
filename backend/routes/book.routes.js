@@ -5,6 +5,7 @@ import {
   getSingleBook,
   updateBook,
   deleteBook,
+  getAdminDashboardStats,
 } from "../controllers/book.controller.js";
 
 import { isAuthenticated, isAdmin } from "../middlewares/auth.middleware.js";
@@ -17,6 +18,9 @@ const router = express.Router();
 // GET all books - accessible at /api/books
 router.get("/", getAllBooks);
 
+// Admin Dashboard Stats
+router.get("/stats", isAuthenticated, isAdmin, getAdminDashboardStats);
+
 router.post(
   "/add",
   isAuthenticated,
@@ -26,8 +30,20 @@ router.post(
 );
 router.get("/all", getAllBooks); // Keep this for backward compatibility
 router.get("/:id", getSingleBook);
-router.put("/:id", isAuthenticated, isAdmin, upload.single("coverImage"), updateBook);
-router.put("/update/:id", isAuthenticated, isAdmin, upload.single("coverImage"), updateBook);
+router.put(
+  "/:id",
+  isAuthenticated,
+  isAdmin,
+  upload.single("coverImage"),
+  updateBook,
+);
+router.put(
+  "/update/:id",
+  isAuthenticated,
+  isAdmin,
+  upload.single("coverImage"),
+  updateBook,
+);
 router.delete("/:id", isAuthenticated, isAdmin, deleteBook);
 router.delete("/delete/:id", isAuthenticated, isAdmin, deleteBook); // Keep both for compatibility
 

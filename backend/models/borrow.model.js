@@ -43,6 +43,3 @@ const borrowSchema = new mongoose.Schema(
 const Borrow = mongoose.model("Borrow", borrowSchema);
 
 export default Borrow;
-const Borrow = mongoose.model("Borrow", borrowSchema);
-
-export default Borrow;

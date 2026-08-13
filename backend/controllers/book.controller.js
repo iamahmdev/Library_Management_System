@@ -249,7 +249,63 @@ export const updateBook = async (req, res) => {
   }
 };
 
-// Delete Book
+// Get Admin Dashboard Stats
+export const getAdminDashboardStats = async (req, res) => {
+  try {
+    // Total books count
+    const totalBooks = await Book.countDocuments();
+    
+    // Total available books
+    const availableBooks = await Book.aggregate([
+      { $group: { _id: null, total: { $sum: "$availableCopies" } } }
+    ]);
+    
+    // Total borrowed books (currently borrowed)
+    const currentlyBorrowed = await Borrow.countDocuments({ status: "borrowed" });
+    
+    // Total students count
+    const totalStudents = await User.countDocuments({ role: "student" });
+    
+    // Overdue books count
+    const overdueBooks = await Borrow.countDocuments({
+      status: "borrowed",
+      dueDate: { $lt: new Date() }
+    });
+    
+    // Books by category
+    const booksByCategory = await Book.aggregate([
+      { $group: { _id: "$category", count: { $sum: 1 } } }
+    ]);
+    
+    // Recent borrowing activity (last 7 days)
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    
+    const recentBorrows = await Borrow.countDocuments({
+      borrowDate: { $gte: sevenDaysAgo }
+    });
+
+    return res.status(200).json({
+      success: true,
+      stats: {
+        totalBooks,
+        availableBooks: availableBooks[0]?.total || 0,
+        currentlyBorrowed,
+        totalStudents,
+        overdueBooks,
+        recentBorrows,
+        booksByCategory
+      }
+    });
+  } catch (error) {
+    console.log("Error fetching admin stats:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch dashboard statistics",
+      error: error.message
+    });
+  }
+};
 export const deleteBook = async (req, res) => {
   try {
     const book = await Book.findById(req.params.id);

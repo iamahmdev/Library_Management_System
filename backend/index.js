@@ -7,6 +7,7 @@ import authRouter from "./routes/auth.routes.js";
 import connectCloudinary from "./config/cloudinary.js";
 import bookRouter from "./routes/book.routes.js";
 import borrowRoutes from "./routes/borrow.routes.js";
+import adminRoutes from "./routes/admin.routes.js";
 
 dotenv.config();
 const app = express();
@@ -32,6 +33,7 @@ connectCloudinary();
 app.use("/api/auth", authRouter);
 app.use("/api/books", bookRouter);
 app.use("/api/borrow", borrowRoutes);
+app.use("/api/admin", adminRoutes);
 
 // ==================== Error Handling Middleware ====================
 app.use((err, req, res, next) => {
