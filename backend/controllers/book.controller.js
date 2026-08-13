@@ -2,6 +2,7 @@ import Book from "../models/book.model.js";
 import { v2 as cloudinary } from "cloudinary";
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
+import Borrow from "../models/borrow.model.js";
 
 // Create Book
 export const createBook = async (req, res) => {
@@ -260,6 +261,35 @@ export const deleteBook = async (req, res) => {
       });
     }
 
+    // Check if book is currently borrowed by any student
+    const activeBorrows = await Borrow.find({
+      book: req.params.id,
+      status: "borrowed" // Only check for unreturned books
+    }).populate("student", "name email");
+
+    if (activeBorrows.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Cannot delete book - it is currently borrowed by students",
+        borrowedBy: activeBorrows.map(borrow => ({
+          studentName: borrow.student.name,
+          studentEmail: borrow.student.email,
+          borrowDate: borrow.borrowDate,
+          dueDate: borrow.dueDate
+        }))
+      });
+    }
+
+    // Delete the book's cover image from Cloudinary if exists
+    if (book.coverImage?.public_id) {
+      try {
+        await cloudinary.uploader.destroy(book.coverImage.public_id);
+      } catch (cloudinaryError) {
+        console.log("Error deleting image from Cloudinary:", cloudinaryError);
+        // Continue with book deletion even if image deletion fails
+      }
+    }
+
     await book.deleteOne();
 
     return res.status(200).json({
@@ -272,6 +302,7 @@ export const deleteBook = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Failed to delete book",
+      error: error.message
     });
   }
 };
