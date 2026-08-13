@@ -1,7 +1,2 @@
 node_modules/
 .env
-
-# Exclude borrow functionality (work in progress)
-controllers/borrow.controller.js
-models/borrow.model.js
-routes/borrow.routes.js
