@@ -6,13 +6,14 @@ import dbConnect from "./config/db.js";
 import authRouter from "./routes/auth.routes.js";
 import connectCloudinary from "./config/cloudinary.js";
 import bookRouter from "./routes/book.routes.js";
+import borrowRoutes from "./routes/borrow.routes.js";
 
 dotenv.config();
 const app = express();
 
 // ==================== Middleware Setup ====================
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
 app.use(
   cors({
@@ -30,14 +31,18 @@ connectCloudinary();
 // ==================== Routes ====================
 app.use("/api/auth", authRouter);
 app.use("/api/books", bookRouter);
+app.use("/api/borrow", borrowRoutes);
 
 // ==================== Error Handling Middleware ====================
 app.use((err, req, res, next) => {
-  console.error('Unhandled error:', err);
+  console.error("Unhandled error:", err);
   res.status(500).json({
     success: false,
-    message: 'Something went wrong!',
-    error: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error'
+    message: "Something went wrong!",
+    error:
+      process.env.NODE_ENV === "development"
+        ? err.message
+        : "Internal server error",
   });
 });
 
