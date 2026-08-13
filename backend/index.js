@@ -9,7 +9,10 @@ import bookRouter from "./routes/book.routes.js";
 
 dotenv.config();
 const app = express();
-app.use(express.json());
+
+// ==================== Middleware Setup ====================
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser());
 app.use(
   cors({
@@ -17,17 +20,26 @@ app.use(
     credentials: true,
   }),
 );
+
 // ==================== Database Connection ====================
 dbConnect();
 
 // ==================== Cloudinary Configuration ====================
 connectCloudinary();
 
-// ==================== User Routes ====================
+// ==================== Routes ====================
 app.use("/api/auth", authRouter);
-
-// ==================== Books Routes ====================
 app.use("/api/books", bookRouter);
+
+// ==================== Error Handling Middleware ====================
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err);
+  res.status(500).json({
+    success: false,
+    message: 'Something went wrong!',
+    error: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error'
+  });
+});
 
 const PORT = process.env.PORT || 5000;
 
