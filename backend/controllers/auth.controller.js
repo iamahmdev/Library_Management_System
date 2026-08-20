@@ -212,8 +212,12 @@ export const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
 
+    console.log("=== FORGOT PASSWORD DEBUG ===");
+    console.log("Received email:", email);
+
     // Check email
     if (!email) {
+      console.log("❌ Email missing");
       return res.status(400).json({
         success: false,
         message: "Email is required",
@@ -224,14 +228,18 @@ export const forgotPassword = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
+      console.log("❌ User not found for email:", email);
       return res.status(404).json({
         success: false,
         message: "User not found",
       });
     }
 
+    console.log("✅ User found:", user.email);
+
     // Generate reset token
     const resetToken = crypto.randomBytes(32).toString("hex");
+    console.log("✅ Reset token generated");
 
     // Hash reset token
     const hashedToken = crypto
@@ -244,36 +252,74 @@ export const forgotPassword = async (req, res) => {
     user.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
 
     await user.save();
+    console.log("✅ Reset token saved to database");
 
     // Create reset password URL
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+    console.log("✅ Reset URL:", resetUrl);
 
-    // Send reset password email
+    // HTML email template
+    const htmlTemplate = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+        <style>
+            body { font-family: 'Roboto', sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: #4f46e5; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+            .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 8px 8px; }
+            .button { display: inline-block; background: #4f46e5; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; margin: 20px 0; font-family: 'Roboto', sans-serif; font-weight: 500; }
+            .footer { text-align: center; color: #666; font-size: 12px; margin-top: 20px; }
+            h2, h3 { font-family: 'Roboto', sans-serif; font-weight: 500; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h2>🔒 Password Reset Request</h2>
+            </div>
+            <div class="content">
+                <h3>Hello!</h3>
+                <p>You requested to reset your password for your Library Management System account.</p>
+                
+                <p>Click the button below to reset your password:</p>
+                
+                <a href="${resetUrl}" class="button">Reset Password</a>
+                
+                <p><strong>⏰ This link will expire in 15 minutes.</strong></p>
+                
+                <p>If the button doesn't work, copy and paste this link in your browser:</p>
+                <p style="word-break: break-all; background: #e9ecef; padding: 10px; border-radius: 4px;">${resetUrl}</p>
+                
+                <p>If you did not request a password reset, please ignore this email.</p>
+                
+                <p>Best regards,<br>Library Management System Team</p>
+            </div>
+            <div class="footer">
+                <p>© 2024 Library Management System. All rights reserved.</p>
+            </div>
+        </div>
+    </body>
+    </html>`;
+
+    console.log("🚀 Attempting to send HTML email...");
+
+    // Send HTML email
     await sendEmail({
       email: user.email,
       subject: "Reset Your Library Management Password",
-      message: `Hello,
-
-You requested to reset your password for your Library Management System account.
-
-Click the link below to reset your password:
-
-${resetUrl}
-
-This link will expire in 15 minutes.
-
-If you did not request a password reset, please ignore this email.
-
-Regards,
-Library Management System`,
+      html: htmlTemplate
     });
+
+    console.log("✅ Email sent successfully!");
 
     return res.status(200).json({
       success: true,
       message: "Password reset link sent successfully",
     });
   } catch (error) {
-    console.log("Error:", error);
+    console.log("❌ Forgot Password Error:", error);
 
     return res.status(500).json({
       success: false,

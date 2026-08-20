@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
 
-const sendEmail = async ({ email, subject, message }) => {
+const sendEmail = async ({ email, subject, message, html }) => {
   try {
     const transporter = nodemailer.createTransport({
       host: process.env.MAILTRAP_HOST,
@@ -11,12 +11,15 @@ const sendEmail = async ({ email, subject, message }) => {
       },
     });
 
-    await transporter.sendMail({
+    const mailOptions = {
       from: process.env.MAILTRAP_FROM_EMAIL,
       to: email,
       subject,
       text: message,
-    });
+      html,
+    };
+
+    await transporter.sendMail(mailOptions);
 
     console.log("Email sent successfully");
   } catch (error) {
