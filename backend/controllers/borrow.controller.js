@@ -14,7 +14,7 @@ export const borrowBook = async (req, res) => {
       });
     }
 
-    const { bookId } = req.body;
+    const { bookId, dueDate } = req.body;
 
     if (!bookId) {
       return res.status(400).json({
@@ -39,13 +39,19 @@ export const borrowBook = async (req, res) => {
       });
     }
 
-    const dueDate = new Date();
-    dueDate.setDate(dueDate.getDate() + 14);
+    // Use provided due date or default to 14 days
+    let borrowDueDate;
+    if (dueDate) {
+      borrowDueDate = new Date(dueDate);
+    } else {
+      borrowDueDate = new Date();
+      borrowDueDate.setDate(borrowDueDate.getDate() + 14);
+    }
 
     const borrow = await Borrow.create({
       student: req.user.id, // Fixed: use id instead of _id
       book: bookId,
-      dueDate,
+      dueDate: borrowDueDate,
     });
 
     book.availableCopies -= 1;

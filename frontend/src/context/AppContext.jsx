@@ -8,11 +8,14 @@ export const AppContextProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(null);
   const [adminStats, setAdminStats] = useState();
+  const [studentStats, setStudentStats] = useState();
   const [students, setStudents] = useState([]);
   const [borrowedBooks, setBorrowedBooks] = useState([]);
+  const [myBooks, setMyBooks] = useState([]);
   const [overdueBooks, setOverdueBooks] = useState([]);
 
-  const isAdmin = user && user.role === "admin"
+  const isAdmin = user && user.role === "admin";
+  const isStudent = user && user.role === "student";
 
 
   const navigate = useNavigate();
@@ -32,7 +35,7 @@ export const AppContextProvider = ({ children }) => {
   }; 
 
 
-  // fetch admin dashboard stats
+  // Fetch admin dashboard stats
   const fetchAdminDashboardStats= async () => {
      try {
        const {data} = await AxiosInstance.get("/books/stats")
@@ -47,6 +50,25 @@ export const AppContextProvider = ({ children }) => {
      }
   }
 
+  // Fetch student dashboard stats
+  const fetchStudentDashboardStats = async () => {
+    try {
+      setLoading(true);
+      const { data } = await AxiosInstance.get("/borrow/dashboard");
+      if (data.success) {
+        // Backend sends stats in data.dashboard object
+        setStudentStats(data.dashboard);
+        console.log("Student stats updated:", data.dashboard); // Debug log
+      }
+    } catch (error) {
+      console.log("error to fetch student stats", error);
+      // Set empty stats if error
+      setStudentStats({});
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // fetch all students
   const fetchStudents = async () => {
     try {
@@ -56,6 +78,22 @@ export const AppContextProvider = ({ children }) => {
       }
     } catch (error) {
       console.log("error to fetch students", error);
+    }
+  };
+
+  // Fetch student's own borrowed books
+  const fetchMyBooks = async () => {
+    try {
+      const { data } = await AxiosInstance.get("/borrow/my");
+      if (data.success) {
+        setMyBooks(data.borrowedBooks || []);
+        console.log("My books updated:", data.borrowedBooks); // Debug log
+      } else {
+        setMyBooks([]);
+      }
+    } catch (error) {
+      console.log("error to fetch my books", error);
+      setMyBooks([]);
     }
   };
 
@@ -87,6 +125,18 @@ export const AppContextProvider = ({ children }) => {
     fetchUser(); 
   }, []);
 
+  // Authentication check - redirect to login if user not authenticated
+  useEffect(() => {
+    const currentPath = window.location.pathname;
+    const isAuthPage = currentPath === '/login' || currentPath === '/register' || 
+                      currentPath === '/forgot-password' || currentPath.startsWith('/reset-password');
+    
+    // If user is not logged in and not on auth pages, redirect to login
+    if (user === null && !isAuthPage) {
+      navigate('/login');
+    }
+  }, [user, navigate]);
+
 
   useEffect(() => {
      if(isAdmin){
@@ -95,7 +145,11 @@ export const AppContextProvider = ({ children }) => {
        fetchBorrowedBooks();
        fetchOverdueBooks();
      }
-  }, [isAdmin])
+     if(isStudent){
+       fetchStudentDashboardStats();
+       fetchMyBooks();
+     }
+  }, [isAdmin, isStudent])
   const value = {
     loading,
     setLoading,
@@ -104,10 +158,14 @@ export const AppContextProvider = ({ children }) => {
     navigate,
     adminStats,
     fetchAdminDashboardStats,
+    studentStats,
+    fetchStudentDashboardStats,
     students,
     fetchStudents,
     borrowedBooks,
     fetchBorrowedBooks,
+    myBooks,
+    fetchMyBooks,
     overdueBooks,
     fetchOverdueBooks
   };

@@ -19,6 +19,12 @@ import StudentLists from "./pages/admin/StudentLists";
 import UpdateBook from "./pages/admin/UpdateBook";
 import UpdateStudent from "./pages/admin/UpdateStudent";
 
+// Student Components
+import Layout from "./pages/student/Layout";
+import StudentDashboard from "./pages/student/StudentDashboard";
+import Books from "./pages/student/Books";
+import MyBooks from "./pages/student/MyBooks";
+
 
 const App = () => {
 const location = useLocation();
@@ -49,13 +55,13 @@ const adminPath = location.pathname.includes("/admin")
           <Route path="update-student/:id" element={<UpdateStudent />} />
         </Route>
         
-        {/* Student Dashboard */}
-        <Route path="/student" element={
-          <div style={{ padding: '20px', textAlign: 'center' }}>
-            <h1>Student Dashboard</h1>
-            <p>Welcome Student!</p>
-          </div>
-        } />
+        {/* Student Routes */}
+        <Route path="/student" element={<Layout />}>
+          <Route index element={<StudentDashboard />} />
+          <Route path="dashboard" element={<StudentDashboard />} />
+          <Route path="books" element={<Books />} />
+          <Route path="my-books" element={<MyBooks />} />
+        </Route>
         
         {/* Default route */}
         <Route path="/" element={<Login />} />
