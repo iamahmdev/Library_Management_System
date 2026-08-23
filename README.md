@@ -15,6 +15,16 @@ A comprehensive Library Management System built with **Node.js**, **Express**, *
 - ✅ **HTML Email Templates** with Roboto font
 - ✅ **Email Service** integration (Mailtrap)
 
+### Admin Panel Features
+- ✅ **Admin Dashboard** with comprehensive statistics
+- ✅ **Book Management** (Add, Edit, Delete, List books)
+- ✅ **Student Management** (View student lists and details)
+- ✅ **Books Borrowed** - Track currently borrowed books
+- ✅ **Overdue Books** - Monitor overdue books with severity levels
+- ✅ **Professional UI/UX** with Tailwind CSS styling
+- ✅ **Real-time Search & Filtering** across all modules
+- ✅ **Responsive Design** for all screen sizes
+
 ### Security Features
 - ✅ **Password Hashing** (bcryptjs)
 - ✅ **JWT Tokens** with 7-day expiry
@@ -83,14 +93,26 @@ Library_Management_System/
     ├── src/
     │   ├── assets/           # Static assets
     │   ├── components/       # Reusable components
+    │   │   ├── Sidebar.jsx   # Admin navigation sidebar
+    │   │   ├── Topbar.jsx    # Admin header with logout
+    │   │   └── admin/        # Admin-specific components
     │   ├── context/
     │   │   └── AppContext.jsx # Global state management
     │   ├── pages/
-    │   │   └── Auth/         # Authentication pages
-    │   │       ├── Login.jsx
-    │   │       ├── Register.jsx
-    │   │       ├── ForgotPassword.jsx
-    │   │       └── ResetPassword.jsx
+    │   │   ├── Auth/         # Authentication pages
+    │   │   │   ├── Login.jsx
+    │   │   │   ├── Register.jsx
+    │   │   │   ├── ForgotPassword.jsx
+    │   │   │   └── ResetPassword.jsx
+    │   │   └── admin/        # Admin panel pages
+    │   │       ├── AdminLayout.jsx    # Admin panel layout
+    │   │       ├── AdminDashboard.jsx # Dashboard with stats
+    │   │       ├── AddBook.jsx        # Add new books
+    │   │       ├── BookList.jsx       # Manage all books
+    │   │       ├── UpdateBook.jsx     # Edit book details
+    │   │       ├── StudentLists.jsx   # View all students
+    │   │       ├── BookBorrowed.jsx   # Currently borrowed books
+    │   │       └── OverdueBooks.jsx   # Overdue book tracking
     │   ├── utils/
     │   │   └── axiosInstance.jsx # HTTP client setup
     │   ├── App.jsx          # Main app component
@@ -265,17 +287,27 @@ GET    /me                 # Get current user profile
 
 ### Admin Routes (`/api/admin`)
 ```
-# Additional admin endpoints (configured but not detailed)
+GET    /students           # Get all students list
+GET    /dashboard          # Admin dashboard statistics
 ```
 
 ### Book Routes (`/api/books`)
 ```
-# Book management endpoints (configured but not detailed)
+GET    /stats              # Book statistics for dashboard
+GET    /                   # Get all books with pagination
+POST   /                   # Add new book (admin only)
+PUT    /:id                # Update book details (admin only)
+DELETE /:id                # Delete book (admin only)
 ```
 
 ### Borrow Routes (`/api/borrow`)
 ```
-# Book borrowing endpoints (configured but not detailed)
+POST   /borrow             # Borrow book (student only)
+POST   /return             # Return book (student only)
+GET    /my                 # Get my borrowed books (student)
+GET    /all                # Get all borrow records (admin only)
+GET    /overdue            # Get overdue books (admin only)
+GET    /dashboard          # Student dashboard stats
 ```
 
 ---
@@ -286,7 +318,14 @@ GET    /me                 # Get current user profile
 - **Email:** `admin@library.com`
 - **Password:** `Admin@123456`
 - **Dashboard:** `/admin/dashboard`
-- **Privileges:** Full system access
+- **Features Available:**
+  - 📊 **Dashboard:** View comprehensive library statistics
+  - 📚 **Book Management:** Add, edit, delete, and manage books
+  - 👥 **Student Management:** View and manage student accounts
+  - 📤 **Borrowed Books:** Track currently borrowed books
+  - 🚨 **Overdue Management:** Monitor overdue books with severity alerts
+  - 🔍 **Search & Filter:** Advanced filtering across all modules
+- **Privileges:** Full system access with administrative controls
 
 ### Student Access
 - **Registration:** Required through `/register`
