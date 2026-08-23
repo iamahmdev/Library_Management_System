@@ -36,8 +36,12 @@ const Login = () => {
         toast.success(data.message);
         setUser(data.user);
 
-        // Just show success message, no redirect for now
-        console.log("User logged in:", data.user);
+        // Redirect based on user role
+        if (data.user.role === "admin") {
+          navigate("/admin/dashboard");
+        } else {
+          navigate("/student");
+        }
       }
 
     } catch (error) {
