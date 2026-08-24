@@ -193,44 +193,322 @@ Frontend will run on `http://localhost:5174`
 - Email: `admin@library.com`
 - Password: `Admin@123456`
 
-## Complete API Documentation
+## Complete API Endpoints Guide
 
 ### 🔐 Authentication Endpoints
-| Method | Endpoint | Description | Access Level |
-|--------|----------|-------------|--------------|
-| `POST` | `/api/auth/register` | Register new student account | Public |
-| `POST` | `/api/auth/login` | Login for both admin and students | Public |
-| `POST` | `/api/auth/logout` | Logout current user | Authenticated |
-| `GET` | `/api/auth/me` | Get current user profile | Authenticated |
-| `POST` | `/api/auth/forgot-password` | Send password reset email | Public |
-| `POST` | `/api/auth/reset-password/:token` | Reset password with token | Public |
+
+#### Register Student Account
+```http
+POST /api/auth/register
+```
+**Purpose:** Create new student account  
+**Access:** Public (anyone can register)  
+**Required Body:**
+```json
+{
+  "name": "Student Name",
+  "email": "student@example.com", 
+  "password": "securePassword123"
+}
+```
+**Usage:** Students use this to create their library account
+
+---
+
+#### User Login (Admin & Students)
+```http
+POST /api/auth/login
+```
+**Purpose:** Login for both admin and students  
+**Access:** Public  
+**Required Body:**
+```json
+{
+  "email": "user@example.com",
+  "password": "password123"
+}
+```
+**Admin Login:** Use `admin@library.com` / `Admin@123456`  
+**Student Login:** Use registered student credentials
+
+---
+
+#### Get Current User Profile
+```http
+GET /api/auth/me
+```
+**Purpose:** Get logged-in user's profile information  
+**Access:** Authenticated users only  
+**Headers:** `Authorization: Bearer <token>`  
+**Usage:** Check if user is logged in and get their details
+
+---
+
+#### User Logout
+```http
+POST /api/auth/logout
+```
+**Purpose:** Logout current user and clear session  
+**Access:** Authenticated users only  
+**Usage:** Securely logout from the system
+
+---
+
+#### Forgot Password
+```http
+POST /api/auth/forgot-password
+```
+**Purpose:** Send password reset email to user  
+**Access:** Public  
+**Required Body:**
+```json
+{
+  "email": "user@example.com"
+}
+```
+**Usage:** When student forgets password, they get reset email
+
+---
+
+#### Reset Password
+```http
+POST /api/auth/reset-password/:token
+```
+**Purpose:** Reset password using email token  
+**Access:** Public (with valid token)  
+**Required Body:**
+```json
+{
+  "password": "newSecurePassword123"
+}
+```
+**Usage:** Student clicks email link and sets new password
+
+---
 
 ### 📖 Book Management Endpoints
-| Method | Endpoint | Description | Access Level |
-|--------|----------|-------------|--------------|
-| `GET` | `/api/books` | Get all books (with search/filter) | All Users |
-| `GET` | `/api/books/:id` | Get single book details | All Users |
-| `POST` | `/api/books` | Create new book with image upload | Admin Only |
-| `PUT` | `/api/books/:id` | Update book details | Admin Only |
-| `DELETE` | `/api/books/:id` | Delete book (if not borrowed) | Admin Only |
-| `GET` | `/api/books/stats` | Get complete book statistics | Admin Only |
+
+#### Get All Books (Browse Library)
+```http
+GET /api/books
+```
+**Purpose:** Browse all books with search and filters  
+**Access:** All authenticated users  
+**Query Parameters:**
+- `keyword` - Search by book title
+- `category` - Filter by book category  
+- `language` - Filter by book language
+- `available=true` - Show only available books
+- `available=false` - Show only unavailable books
+
+**Example:** `/api/books?keyword=javascript&category=programming&available=true`  
+**Usage:** Students browse books, Admin manages inventory
+
+---
+
+#### Get Single Book Details
+```http
+GET /api/books/:id
+```
+**Purpose:** Get detailed information about specific book  
+**Access:** All authenticated users  
+**Usage:** View book details before borrowing or for information
+
+---
+
+#### Create New Book (Admin Only)
+```http
+POST /api/books
+```
+**Purpose:** Add new book to library with image upload  
+**Access:** Admin only  
+**Content-Type:** `multipart/form-data`  
+**Required Fields:**
+- `title` - Book title
+- `description` - Book description
+- `category` - Book category
+- `language` - Book language (default: English)
+- `totalCopies` - Number of copies
+- `coverImage` - Book cover image file
+
+**Usage:** Admin adds new books to the library system
+
+---
+
+#### Update Book Details (Admin Only)
+```http
+PUT /api/books/:id
+```
+**Purpose:** Update existing book information  
+**Access:** Admin only  
+**Content-Type:** `multipart/form-data`  
+**Optional Fields:** Same as create, update only provided fields  
+**Usage:** Admin edits book information or replaces cover image
+
+---
+
+#### Delete Book (Admin Only)
+```http
+DELETE /api/books/:id
+```
+**Purpose:** Remove book from library  
+**Access:** Admin only  
+**Restriction:** Cannot delete books currently borrowed by students  
+**Usage:** Admin removes outdated or damaged books
+
+---
+
+#### Get Book Statistics (Admin Only)
+```http
+GET /api/books/stats
+```
+**Purpose:** Get comprehensive library statistics  
+**Access:** Admin only  
+**Returns:**
+- Total books count
+- Available books count  
+- Currently borrowed count
+- Total students
+- Overdue books count
+- Books by category breakdown
+- Recent borrowing trends
+
+**Usage:** Admin dashboard analytics and reporting
+
+---
 
 ### 📚 Borrowing System Endpoints
-| Method | Endpoint | Description | Access Level |
-|--------|----------|-------------|--------------|
-| `POST` | `/api/borrow/:bookId` | Borrow a book | Students Only |
-| `POST` | `/api/borrow/return` | Return borrowed book | Students Only |
-| `GET` | `/api/borrow/my` | Get my borrowed books | Students Only |
-| `GET` | `/api/borrow/all` | Get all borrowing records | Admin Only |
-| `GET` | `/api/borrow/overdue` | Get all overdue books | Admin Only |
-| `GET` | `/api/borrow/dashboard` | Get student dashboard stats | Students Only |
 
-### 👥 Student Management Endpoints  
-| Method | Endpoint | Description | Access Level |
-|--------|----------|-------------|--------------|
-| `GET` | `/api/admin/students` | Get all registered students | Admin Only |
-| `GET` | `/api/admin/students/:id` | Get single student details | Admin Only |
-| `DELETE` | `/api/admin/students/:id` | Delete student account | Admin Only |
+#### Borrow a Book (Students Only)
+```http
+POST /api/borrow/:bookId
+```
+**Purpose:** Student borrows an available book  
+**Access:** Students only  
+**Required Body:**
+```json
+{
+  "dueDate": "2024-03-15" // Optional, defaults to 14 days
+}
+```
+**Restrictions:** 
+- Book must be available (availableCopies > 0)
+- Only students can borrow books
+
+**Usage:** Student borrows book from library
+
+---
+
+#### Return Borrowed Book (Students Only)
+```http
+POST /api/borrow/return
+```
+**Purpose:** Student returns their borrowed book  
+**Access:** Students only  
+**Required Body:**
+```json
+{
+  "borrowId": "507f1f77bcf86cd799439011"
+}
+```
+**Restrictions:**
+- Can only return own borrowed books
+- Cannot return already returned books
+
+**Usage:** Student returns book to library
+
+---
+
+#### Get My Borrowed Books (Students Only)
+```http
+GET /api/borrow/my
+```
+**Purpose:** Student views their borrowing history  
+**Access:** Students only  
+**Returns:** All books borrowed by logged-in student (current & past)  
+**Usage:** Student tracks their borrowed books and due dates
+
+---
+
+#### Get All Borrowing Records (Admin Only)
+```http
+GET /api/borrow/all
+```
+**Purpose:** Admin views all borrowing activity  
+**Access:** Admin only  
+**Returns:** Complete borrowing records across all students  
+**Usage:** Admin monitors all library borrowing activity
+
+---
+
+#### Get Overdue Books (Admin Only)
+```http
+GET /api/borrow/overdue
+```
+**Purpose:** Admin views all overdue books  
+**Access:** Admin only  
+**Returns:** Books not returned by due date  
+**Usage:** Admin tracks late returns and sends reminders
+
+---
+
+#### Get Student Dashboard Stats (Students Only)
+```http
+GET /api/borrow/dashboard
+```
+**Purpose:** Student's personal library statistics  
+**Access:** Students only  
+**Returns:**
+- Currently borrowed books count
+- Overdue books count
+- Total borrowing history
+- Returned books count
+- Recent activity (30 days)
+- Available books in library
+
+**Usage:** Student dashboard showing personal stats
+
+---
+
+### 👥 Student Management Endpoints (Admin Only)
+
+#### Get All Students
+```http
+GET /api/admin/students
+```
+**Purpose:** Admin views all registered students  
+**Access:** Admin only  
+**Returns:** List of all students with their details  
+**Usage:** Admin manages student accounts and monitors users
+
+---
+
+#### Get Single Student Details  
+```http
+GET /api/admin/students/:id
+```
+**Purpose:** Admin views specific student's profile  
+**Access:** Admin only  
+**Returns:** Detailed student information  
+**Usage:** Admin checks individual student details
+
+---
+
+#### Delete Student Account
+```http
+DELETE /api/admin/students/:id
+```
+**Purpose:** Admin removes student from system  
+**Access:** Admin only  
+**Usage:** Admin deletes inactive or problematic student accounts
+
+---
+
+## 🔑 Authentication Requirements
+
+**For Admin Endpoints:** Use admin credentials (`admin@library.com` / `Admin@123456`)  
+**For Student Endpoints:** Use registered student credentials  
+**Token Usage:** Include `Authorization: Bearer <token>` header for authenticated requests
 
 ## Project Structure
 ```
