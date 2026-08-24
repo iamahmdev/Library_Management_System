@@ -103,7 +103,57 @@ A full-stack Library Management System built with React.js, Node.js, Express.js,
 - Cloudinary for image storage
 - Nodemailer for emails
 - Multer for file uploads
+My Library Management System is now deployed on Vercel.
 
+BACKEND URL:
+https://library-management-system-yjop.vercel.app
+
+FRONTEND URL:
+https://library-management-system-kappa-gray.vercel.app/login
+
+Please configure my project so the deployed frontend can communicate correctly with the deployed backend.
+
+Requirements:
+1. Frontend must use:
+   https://library-management-system-yjop.vercel.app
+
+2. Backend CORS must allow:
+   https://library-management-system-kappa-gray.vercel.app
+
+3. Keep localhost development working exactly as before:
+   http://localhost:5173
+   http://localhost:5174
+
+4. Do NOT remove or break my local MongoDB setup.
+
+5. Production backend must use MongoDB Atlas through Vercel Environment Variables.
+
+6. Check my Axios configuration and make sure API requests use the production backend URL on Vercel while localhost continues using localhost during local development.
+
+7. Make sure these API routes continue working:
+   /api/auth
+   /api/books
+   /api/borrow
+   /api/admin
+
+8. Make sure credentials/cookies work correctly between the Vercel frontend and backend because my authentication uses cookies.
+
+9. Do NOT hardcode passwords, JWT secrets, MongoDB credentials, Mailtrap credentials, or Cloudinary secrets in the source code.
+
+10. Tell me exactly which Vercel Environment Variables I need to add for both frontend and backend.
+
+11. Make the minimum required changes only.
+
+After checking the project, give me:
+- Files that need changes
+- Exact code changes
+- Frontend Vercel environment variables
+- Backend Vercel environment variables
+- Exact steps to redeploy both frontend and backend
+- How to test Register, Login, Forgot Password, Books, Borrow, and Admin functionality online.
+
+IMPORTANT:
+Do not change my localhost setup. Local development must continue working normally.
 ## Prerequisites
 
 Before running this application, make sure you have the following installed:
