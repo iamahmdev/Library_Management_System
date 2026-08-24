@@ -20,8 +20,9 @@ app.use(
   cors({
     origin: [
       "http://localhost:5174", 
-      "http://localhost:5173"
-    ],
+      "http://localhost:5173",
+      process.env.FRONTEND_URL // Add Vercel frontend URL from environment
+    ].filter(Boolean), // Remove any undefined values
     credentials: true,
   }),
 );
@@ -38,6 +39,15 @@ app.use("/api/books", bookRouter);
 app.use("/api/borrow", borrowRoutes);
 app.use("/api/admin", adminRoutes);
 
+// ==================== Health Check Route ====================
+app.get("/", (req, res) => {
+  res.json({ 
+    success: true, 
+    message: "Library Management System API is running!",
+    environment: process.env.NODE_ENV || "development"
+  });
+});
+
 // ==================== Error Handling Middleware ====================
 app.use((err, req, res, next) => {
   console.error("Unhandled error:", err);
@@ -53,6 +63,12 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`Your server is Running on PORT ${PORT}`);
-});
+// Only start server if not in Vercel environment
+if (process.env.NODE_ENV !== "production" || !process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`Your server is Running on PORT ${PORT}`);
+  });
+}
+
+// Export the Express app for Vercel
+export default app;
