@@ -1,58 +1,121 @@
-# 📚 Library Management System
+# Library Management System
 
-A modern, full-stack web application for managing library operations with separate portals for administrators and students.
+A full-stack Library Management System built with React.js, Node.js, Express.js, and MongoDB (Localhost).
 
-## 🌟 Features
+## User Roles & Capabilities
 
-### 👨‍💼 Admin Portal
-- **Dashboard** - Complete statistics and analytics
-- **Book Management** - Add, update, delete books with cover images
-- **Student Management** - Add, update student accounts
-- **Borrowing System** - Track borrowed, returned, and overdue books
-- **Reports** - View all library activities and statistics
+### 🔑 Admin Capabilities (Complete Administrative Control)
 
-### 🎓 Student Portal  
-- **Personal Dashboard** - View borrowing stats and recent activity
-- **Browse Books** - Search and borrow books with custom due dates (1-30 days)
-- **My Books** - Modern card-based UI to manage borrowed books
-- **Return System** - Easy one-click book return functionality
+**Authentication & Profile Management:**
+- Admin logs in using pre-configured credentials from environment variables (admin@library.com)
+- Admin profile is managed through environment settings, not database
+- Admin can view their profile information
+- Admin can logout securely
 
-### 🔐 Authentication
-- **Role-based Access** - Separate admin and student interfaces
-- **JWT Authentication** - Secure token-based login system
-- **Password Reset** - Forgot password functionality with email
-- **User Registration** - Account creation for students
+**Book Management (Complete CRUD Operations):**
+- Admin can create new books with cover image upload to Cloudinary
+- Admin can view all books in the library with search and filter options
+- Admin can update book details including title, description, category, language, and copies
+- Admin can delete books (only if not currently borrowed by any student)
+- Admin can view detailed statistics of all books in the system
 
-## 🛠️ Tech Stack
+**Student Management:**
+- Admin can view all registered students in the system
+- Admin can view individual student profiles and details
+- Admin can delete student accounts from the system
+- Admin can track student borrowing history and current status
 
-### Frontend
-- **React.js** - Modern UI framework
-- **Tailwind CSS** - Utility-first styling
-- **React Router** - Client-side routing
-- **Axios** - HTTP client for API calls
-- **React Hot Toast** - Beautiful notifications
+**Borrowing System Oversight:**
+- Admin can view all borrowed books across all students
+- Admin can see which student borrowed which book and when
+- Admin can track overdue books and identify late returns
+- Admin can monitor return dates and borrowing patterns
+- Admin receives complete borrowing statistics and analytics
 
-### Backend
-- **Node.js** - JavaScript runtime
-- **Express.js** - Web application framework
-- **MongoDB** - NoSQL database
-- **Mongoose** - MongoDB object modeling
-- **JWT** - JSON Web Tokens for authentication
-- **Bcrypt** - Password hashing
-- **Multer** - File upload handling
-- **Cloudinary** - Image storage and management
-- **Nodemailer** - Email functionality
+**Dashboard & Analytics:**
+- Admin gets comprehensive dashboard with key metrics
+- Total books count and available copies tracking
+- Currently borrowed books statistics
+- Total registered students count
+- Overdue books monitoring and alerts
+- Books categorized by type for inventory management
+- Recent borrowing activity trends (last 7 days)
 
-## 🚀 Installation & Setup
+### 📚 Student Capabilities (Library User Functions)
 
-### Prerequisites
-- Node.js (v14 or higher)
-- MongoDB (local or Atlas)
+**Authentication & Profile Management:**
+- Students can register new accounts with email verification
+- Students can login with email and password
+- Students can view and manage their own profile
+- Students can request password reset via email
+- Students can logout securely
+
+**Book Discovery & Browsing:**
+- Students can browse all available books in the library
+- Students can search books by title with keyword matching
+- Students can filter books by category and language
+- Students can view detailed information about each book
+- Students can see real-time availability status of books
+
+**Borrowing System:**
+- Students can borrow available books (when copies are available)
+- Students can set custom due dates or use default 14-day period
+- Students are prevented from borrowing unavailable books
+- System automatically updates book availability upon borrowing
+
+**Return System:**
+- Students can return their borrowed books
+- Students can only return books they personally borrowed
+- System prevents returning already returned books
+- System automatically updates book availability upon return
+
+**Personal Library Management:**
+- Students can view all their currently borrowed books
+- Students can see their complete borrowing history
+- Students can track due dates for their borrowed books
+- Students can identify which books are overdue
+
+**Dashboard & Personal Analytics:**
+- Students get personalized dashboard with their statistics
+- Currently borrowed books count and details
+- Overdue books tracking and notifications
+- Total borrowing history across all time
+- Recently borrowed books (last 30 days activity)
+- Returned books count and punctuality tracking
+- Available books count in the entire library system
+
+## Tech Stack
+
+**Frontend:**
+- React.js 19 + Vite
+- Tailwind CSS 4
+- Axios for API calls
+- React Router for navigation
+- React Hot Toast for notifications
+- Lucide React for icons
+
+**Backend:**
+- Node.js
+- Express.js
+- MongoDB (Local)
+- JWT Authentication
+- Bcrypt for password hashing
+- Cloudinary for image storage
+- Nodemailer for emails
+- Multer for file uploads
+
+## Prerequisites
+
+Before running this application, make sure you have the following installed:
+- Node.js (v16 or later)
+- MongoDB (Local installation)
 - Git
 
-### 1. Clone Repository
+## Installation & Setup
+
+### 1. Clone the Repository
 ```bash
-git clone <repository-url>
+git clone <your-repo-url>
 cd Library_Management_System
 ```
 
@@ -62,24 +125,32 @@ cd backend
 npm install
 ```
 
-Create `.env` file in backend folder:
+Create a `.env` file in the backend directory with the following variables:
 ```env
-MONGODB_URI=mongodb://localhost:27017/library
-JWT_SECRET=your-secret-key
-EMAIL_HOST=smtp.gmail.com
-EMAIL_PORT=587
-EMAIL_USER=your-email@gmail.com
-EMAIL_PASS=your-app-password
-CLOUDINARY_CLOUD_NAME=your-cloud-name
-CLOUDINARY_API_KEY=your-api-key
-CLOUDINARY_API_SECRET=your-api-secret
-```
+PORT=5000
+FRONTEND_URL=http://localhost:5174
 
-Start backend server:
-```bash
-npm start
+# MongoDB - LOCAL ONLY
+MONGO_URI=mongodb://localhost:27017/library_management_local
+
+JWT_SECRET_KEY=my_secret_key_123
+
+# Admin Credentials
+ADMIN_EMAIL=admin@library.com
+ADMIN_PASSWORD=Admin@123456
+
+# Mailtrap SMTP Credentials (for email functionality)
+MAILTRAP_HOST=sandbox.smtp.mailtrap.io
+MAILTRAP_PORT=2525
+MAILTRAP_USERNAME=your_mailtrap_username
+MAILTRAP_PASSWORD=your_mailtrap_password
+MAILTRAP_FROM_EMAIL=noreply@library.com
+
+# Cloudinary Configuration (for image uploads)
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 ```
-Backend runs on `http://localhost:5000`
 
 ### 3. Frontend Setup
 ```bash
@@ -87,120 +158,129 @@ cd frontend
 npm install
 ```
 
-Create `.env` file in frontend folder:
+Frontend `.env` file already configured:
 ```env
 VITE_BACKEND_URL=http://localhost:5000
+VITE_BASE_URL=http://localhost:5000/api
 ```
 
-Start frontend development server:
+### 4. Database Setup
+Make sure MongoDB is running locally on your machine:
 ```bash
+# Start MongoDB service (Windows)
+net start MongoDB
+
+# Or use MongoDB Compass to connect to localhost:27017
+```
+
+## Running the Application
+
+### 1. Start Backend Server
+```bash
+cd backend
 npm run dev
 ```
-Frontend runs on `http://localhost:5173`
+Backend will run on `http://localhost:5000`
 
-## 📡 API Endpoints
+### 2. Start Frontend Server
+```bash
+cd frontend
+npm run dev
+```
+Frontend will run on `http://localhost:5174`
 
-### Authentication
-- `POST /auth/register` - Register new user
-- `POST /auth/login` - User login
-- `GET /auth/me` - Get current user
-- `POST /auth/forgot-password` - Send reset email
-- `POST /auth/reset-password/:token` - Reset password
+## Default Admin Login
+- Email: `admin@library.com`
+- Password: `Admin@123456`
 
-### Books (Admin)
-- `GET /books` - Get all books
-- `POST /books/add` - Add new book
-- `PUT /books/update/:id` - Update book
-- `DELETE /books/delete/:id` - Delete book
-- `GET /books/stats` - Get admin statistics
+## Complete API Documentation
 
-### Borrowing
-- `POST /borrow/borrow` - Borrow a book
-- `POST /borrow/return` - Return a book
-- `GET /borrow/my` - Get user's borrowed books
-- `GET /borrow/dashboard` - Get student statistics
-- `GET /borrow/all` - Get all borrowed books (Admin)
-- `GET /borrow/overdue` - Get overdue books (Admin)
+### 🔐 Authentication Endpoints
+| Method | Endpoint | Description | Access Level |
+|--------|----------|-------------|--------------|
+| `POST` | `/api/auth/register` | Register new student account | Public |
+| `POST` | `/api/auth/login` | Login for both admin and students | Public |
+| `POST` | `/api/auth/logout` | Logout current user | Authenticated |
+| `GET` | `/api/auth/me` | Get current user profile | Authenticated |
+| `POST` | `/api/auth/forgot-password` | Send password reset email | Public |
+| `POST` | `/api/auth/reset-password/:token` | Reset password with token | Public |
 
-### Admin
-- `GET /admin/students` - Get all students
-- `POST /admin/add-student` - Add new student
-- `PUT /admin/update-student/:id` - Update student
-- `DELETE /admin/delete-student/:id` - Delete student
+### 📖 Book Management Endpoints
+| Method | Endpoint | Description | Access Level |
+|--------|----------|-------------|--------------|
+| `GET` | `/api/books` | Get all books (with search/filter) | All Users |
+| `GET` | `/api/books/:id` | Get single book details | All Users |
+| `POST` | `/api/books` | Create new book with image upload | Admin Only |
+| `PUT` | `/api/books/:id` | Update book details | Admin Only |
+| `DELETE` | `/api/books/:id` | Delete book (if not borrowed) | Admin Only |
+| `GET` | `/api/books/stats` | Get complete book statistics | Admin Only |
 
-## 🎯 Key Features
+### 📚 Borrowing System Endpoints
+| Method | Endpoint | Description | Access Level |
+|--------|----------|-------------|--------------|
+| `POST` | `/api/borrow/:bookId` | Borrow a book | Students Only |
+| `POST` | `/api/borrow/return` | Return borrowed book | Students Only |
+| `GET` | `/api/borrow/my` | Get my borrowed books | Students Only |
+| `GET` | `/api/borrow/all` | Get all borrowing records | Admin Only |
+| `GET` | `/api/borrow/overdue` | Get all overdue books | Admin Only |
+| `GET` | `/api/borrow/dashboard` | Get student dashboard stats | Students Only |
 
-### Real-time Updates
-- Automatic data refresh after every operation
-- Live statistics updates
-- Instant availability changes
+### 👥 Student Management Endpoints  
+| Method | Endpoint | Description | Access Level |
+|--------|----------|-------------|--------------|
+| `GET` | `/api/admin/students` | Get all registered students | Admin Only |
+| `GET` | `/api/admin/students/:id` | Get single student details | Admin Only |
+| `DELETE` | `/api/admin/students/:id` | Delete student account | Admin Only |
 
-### Modern UI/UX
-- Responsive design for all devices
-- Card-based layouts for better readability
-- Color-coded status indicators
-- Loading states and error handling
+## Project Structure
+```
+Library_Management_System/
+├── backend/
+│   ├── config/          # Database & Cloudinary config
+│   ├── controllers/     # Route controllers
+│   ├── middleware/      # Authentication middleware
+│   ├── models/          # MongoDB models
+│   ├── routes/          # API routes
+│   ├── utils/           # Utility functions
+│   └── index.js         # Main server file
+├── frontend/
+│   ├── src/
+│   │   ├── components/  # React components
+│   │   ├── context/     # React context
+│   │   ├── pages/       # Page components
+│   │   ├── utils/       # Utility functions
+│   │   └── App.jsx      # Main App component
+│   └── public/          # Static assets
+└── README.md
+```
 
-### Smart Due Date System
-- Custom due date selection (1-30 days)
-- Automatic overdue detection
-- Visual overdue indicators
+## React + Vite Setup (Frontend)
 
-### File Upload
-- Book cover image uploads
-- Cloudinary integration for image storage
-- Fallback icons for books without covers
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## 📱 User Interfaces
+Currently, two official plugins are available:
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-### Admin Dashboard
-- Total books, students, and borrowing statistics
-- Recent activities overview
-- Quick action buttons
-- Comprehensive reporting
+## Troubleshooting
 
-### Student Dashboard  
-- Personal borrowing statistics
-- Recent activity table with status colors
-- Clean, intuitive navigation
-- Quick access to all features
+1. **MongoDB Connection Issues:**
+   - Make sure MongoDB is running locally
+   - Check if the port 27017 is available
+   - Verify the MONGO_URI in .env file
 
-### Books Management
-- Grid-based book browsing
-- Advanced search and filtering
-- Real-time availability updates
-- Smooth borrowing workflow
+2. **CORS Issues:**
+   - Make sure frontend URL matches in backend CORS configuration
+   - Check if both servers are running on correct ports
 
-## 🔒 Security Features
-- Password hashing with bcrypt
-- JWT token authentication
-- Role-based access control
-- Input validation and sanitization
-- CORS configuration
-- Environment variable protection
+3. **Authentication Issues:**
+   - Clear browser cookies and localStorage
+   - Check JWT_SECRET_KEY in .env file
 
-## 🌐 Deployment Ready
-- Environment-based configuration
-- Separate development and production settings
-- Ready for cloud deployment (Vercel, Netlify, Heroku)
-- MongoDB Atlas compatibility
+4. **Image Upload Issues:**
+   - Verify Cloudinary credentials in .env file
+   - Check internet connection for Cloudinary uploads
 
-## 🤝 Contributing
-1. Fork the repository
-2. Create feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open Pull Request
+## License
 
-## 📄 License
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🙏 Acknowledgments
-- Built with modern web technologies
-- Designed for real-world library management
-- Focus on user experience and performance
-- Complete full-stack implementation
-
----
-
-**Made with ❤️ for efficient library management**
+This project is licensed under the MIT License.
