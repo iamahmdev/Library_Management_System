@@ -15,7 +15,7 @@ const MyBooks = () => {
   const handleReturnBook = async (borrowId) => {
     try {
       setReturning(borrowId);
-      const { data } = await AxiosInstance.post("/borrow/return", { borrowId });
+      const { data } = await AxiosInstance.post("/api/borrow/return", { borrowId });
       
       if (data.success) {
         toast.success("Book returned successfully!");

@@ -38,7 +38,7 @@ export const AppContextProvider = ({ children }) => {
   // Fetch admin dashboard stats
   const fetchAdminDashboardStats= async () => {
      try {
-       const {data} = await AxiosInstance.get("/books/stats")
+       const {data} = await AxiosInstance.get("/api/books/stats")
         if(data.success){
           setAdminStats(data)
         }
@@ -54,7 +54,7 @@ export const AppContextProvider = ({ children }) => {
   const fetchStudentDashboardStats = async () => {
     try {
       setLoading(true);
-      const { data } = await AxiosInstance.get("/borrow/dashboard");
+      const { data } = await AxiosInstance.get("/api/borrow/dashboard");
       if (data.success) {
         // Backend sends stats in data.dashboard object
         setStudentStats(data.dashboard);
@@ -84,7 +84,7 @@ export const AppContextProvider = ({ children }) => {
   // Fetch student's own borrowed books
   const fetchMyBooks = async () => {
     try {
-      const { data } = await AxiosInstance.get("/borrow/my");
+      const { data } = await AxiosInstance.get("/api/borrow/my");
       if (data.success) {
         setMyBooks(data.borrowedBooks || []);
         console.log("My books updated:", data.borrowedBooks); // Debug log
@@ -100,7 +100,7 @@ export const AppContextProvider = ({ children }) => {
   // fetch all borrowed books
   const fetchBorrowedBooks = async () => {
     try {
-      const { data } = await AxiosInstance.get("/borrow/all");
+      const { data } = await AxiosInstance.get("/api/borrow/all");
       if (data.success) {
         setBorrowedBooks(data.borrowedBooks || []);
       }
@@ -112,7 +112,7 @@ export const AppContextProvider = ({ children }) => {
   // fetch overdue books
   const fetchOverdueBooks = async () => {
     try {
-      const { data } = await AxiosInstance.get("/borrow/overdue");
+      const { data } = await AxiosInstance.get("/api/borrow/overdue");
       if (data.success) {
         setOverdueBooks(data.overdueBooks || []);
       }

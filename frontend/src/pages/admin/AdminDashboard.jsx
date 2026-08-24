@@ -47,7 +47,7 @@ const AdminDashboard = () => {
   const fetchBorrowedBooks = async () => {
     try {
       setBorrowLoading(true);
-      const { data } = await AxiosInstance.get("/borrow/admin/all");
+      const { data } = await AxiosInstance.get("/api/borrow/all");
       if (data.success) {
         setBorrowedBooks(data.borrowedBooks || []);
       }

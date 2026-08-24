@@ -30,7 +30,7 @@ const Login = () => {
     try {
       setLoading(true);
 
-      const { data } = await AxiosInstance.post("/auth/login", formdata);
+      const { data } = await AxiosInstance.post("/api/auth/login", formdata);
 
       if (data.success) {
         toast.success(data.message);

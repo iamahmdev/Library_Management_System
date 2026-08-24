@@ -21,7 +21,7 @@ const Register = () => {
     try {
       setLoading(true);
 
-      const { data } = await AxiosInstance.post("/auth/register", formdata);
+      const { data } = await AxiosInstance.post("/api/auth/register", formdata);
 
       if (data.success) {
         toast.success(data.message);

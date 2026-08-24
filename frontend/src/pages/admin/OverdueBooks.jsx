@@ -12,7 +12,7 @@ const OverdueBooks = () => {
   const fetchOverdueBooks = async () => {
     try {
       setLoadingOverdue(true);
-      const { data } = await AxiosInstance.get("/borrow/overdue");
+      const { data } = await AxiosInstance.get("/api/borrow/overdue");
       if (data.success) {
         setOverdueBooks(data.overdueBooks || []);
       }

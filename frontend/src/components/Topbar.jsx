@@ -10,7 +10,7 @@ const Topbar = () => {
     try {
       setLoading(true);
       
-      const { data } = await AxiosInstance.post("/auth/logout");
+      const { data } = await AxiosInstance.post("/api/auth/logout");
       
       if (data.success) {
         toast.success(data.message || "Logged out successfully");

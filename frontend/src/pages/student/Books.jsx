@@ -17,7 +17,7 @@ const Books = () => {
   const fetchAllBooks = async () => {
     try {
       setLoading(true);
-      const { data } = await AxiosInstance.get("/books");
+      const { data } = await AxiosInstance.get("/api/books");
       if (data.success) {
         console.log("Books data:", data.books); // Debug log
         console.log("First book:", data.books[0]); // Check first book structure
@@ -41,7 +41,7 @@ const Books = () => {
 
     try {
       setBorrowing(bookId);
-      const { data } = await AxiosInstance.post("/borrow/borrow", { 
+      const { data } = await AxiosInstance.post("/api/borrow/borrow", { 
         bookId, 
         dueDate 
       });
