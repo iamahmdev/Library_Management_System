@@ -22,7 +22,7 @@ export const AppContextProvider = ({ children }) => {
 
   const fetchUser = async () => {
     try {
-      const { data } = await AxiosInstance.get("/auth/me");
+      const { data } = await AxiosInstance.get("/api/auth/me");
 
       if (data.success) {
         setUser(data.user);
