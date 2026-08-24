@@ -34,6 +34,12 @@ const Login = () => {
 
       if (data.success) {
         toast.success(data.message);
+        
+        // Save token to localStorage for cross-domain auth
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+        }
+        
         setUser(data.user);
 
         // Redirect based on user role

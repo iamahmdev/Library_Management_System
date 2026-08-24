@@ -14,6 +14,10 @@ const Topbar = () => {
       
       if (data.success) {
         toast.success(data.message || "Logged out successfully");
+        
+        // Clear token from localStorage
+        localStorage.removeItem('token');
+        
         setUser(null);
         navigate("/login");
       }

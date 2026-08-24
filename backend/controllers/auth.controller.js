@@ -7,8 +7,8 @@ import sendEmail from "../utils/sendEmail.js";
 // JWT authentication cookie configuration
 const cookieOptions = {
   httpOnly: true,
-  secure: false,
-  sameSite: "strict",
+  secure: process.env.NODE_ENV === "production", // HTTPS only in production
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "strict", // Allow cross-site in production
   maxAge: 7 * 24 * 60 * 60 * 1000,
 };
 
@@ -91,6 +91,7 @@ export const loginUser = async (req, res) => {
       return res.status(200).json({
         success: true,
         message: "Admin logged in successfully",
+        token: token, // Add token in response for cross-domain
         user: {
           email: process.env.ADMIN_EMAIL,
           role: "admin",
@@ -130,6 +131,7 @@ export const loginUser = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "User logged in successfully",
+      token: token, // Add token in response for cross-domain
       user: {
         id: user._id,
         name: user.name,

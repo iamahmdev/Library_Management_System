@@ -3,7 +3,16 @@ import jwt from "jsonwebtoken";
 // Check User Authentication
 export const isAuthenticated = async (req, res, next) => {
   try {
-    const token = req.cookies.token;
+    // Try cookie first, then Authorization header
+    let token = req.cookies.token;
+    
+    // If no cookie token, check Authorization header
+    if (!token) {
+      const authHeader = req.headers.authorization;
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        token = authHeader.substring(7); // Remove 'Bearer ' prefix
+      }
+    }
 
     if (!token) {
       return res.status(401).json({
